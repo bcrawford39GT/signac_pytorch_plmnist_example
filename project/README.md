@@ -1,12 +1,25 @@
 ## Project directory
 --------------------
 
-### Overview
+## Overview
 All the `signac` commands are run from the `<local_path>/signac_pytorch_plmnist_example/signac_pytorch_plmnist_example/project` directory, which include, but are not limited to the following commands:
 
 
-##### Run or submit signac jobs:
-This can be done at the start of a new project, but is not always required. If you moved the directory after starting a project or signac can not find the path correctly, you will need to run the following command (`signac init`) from the `project` directory:
+- The signac workflows for "this project" can be built using `mamba`.  Alternatively, you use can use `micromamba` or `miniforge`,  supplimenting `micromamba` or `conda`, respectively for `mamba` when using them.  
+
+If you are using an HPC, you will likely need the below command or a similar command to load the correct python package manager.  
+
+```bash
+module load mamba
+```
+
+Activate the environment:
+
+```bash
+mamba activate plmnist
+```
+
+The `signac init` command can be done at the start of a new project, but is not always required. If you moved the directory after starting a project or signac can not find the path correctly, you may need to run the following command (`signac init`) from the `project` directory:
 
 ```bash
 signac init
@@ -16,42 +29,161 @@ signac init
 ```bash
 python init.py
 ```
+
  - Checking the project status.
+    ```bash
+    row show status
+    ```
+
+ - **All Available Project Parts:**  Submit and run all the available jobs from all the parts.
+   1. See the `row show status` output for the part names.
+   2. Note: This can be run on the HPC or locally.  However, if `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
+
+    **Run the following command and test/review the output to make sure it is submitting the correct slurm scripts or local output:**
+    ```bash
+    row submit --dry-run
+    ```
+
+    **Run the following command to submit or execute all the available jobs:**
+   ```bash
+    row submit
+    ```
+
+- **Specific Project Parts:**  Submit and and run all the available jobs from specific the parts.
+  1. See the `row show status` output for the part names.
+  2. Note: This can be run on the HPC or locally.  However, if `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
+
+    **Run the following command and review the output to make sure it is submitting the correct slurm scripts or local output:**:**
+    ```bash
+    row submit --action <part_x_this_does_a_function_y> --dry-run
+    ```
+
+    **Run the following command to submit or execute all the available jobs for that part:**
+    ```bash
+    row submit --action <part_x_this_does_a_function_y>
+    ```
+
+## Submit the workflow jobs locally or to an HPC, depending on the `workflow.toml` file setup. 
+
+Please also look [here](https://row.readthedocs.io/en/0.4.0/workflow/action/submit-options.html) for more details on the HPC setup.
+
+## Setup the Run this project.
+
+All commands in this section are run from the `<local_path>/signac_pytorch_plmnist_example/signac_pytorch_plmnist_example/project` directory.
+
+The `signac init` command can be done at the start of a new project, but is not always required. If you moved the directory after starting a project or signac can not find the path correctly, you will need to run the following command (`signac init`) from the `project` directory:
+
 ```bash
-python project.py status
+signac init
 ```
- - Running the project's selected part locally (general example only).
+
+In general, check the status of the workflows buy running `row show status` and `row submit --dry-run` before each submission to ensure each workflow part is not written in a way that is computationally expensive.  
+
 ```bash
-python project.py run -o <part_x_this_does_a_function_y>
+row show status
 ```
 
-  - Submitting the project's selected part to the HPC (general example only).
 ```bash
-python project.py submit -o <part_x_this_does_a_function_y>
+row submit --dry-run
 ```
 
-When using the `run` command, you can run the following flags, controlling the how the jobs are executed on the local machine (does not produce HPC job submission scripts):
- - `--parallel 2` : This only works this way when using `run`. This runs several jobs in parallel (2 in this case) at a time on the local machine.
- - See the `signac` [documenation](https://docs.signac.io/en/latest/) for more information, features, and the [Project Command Line Interface](https://docs.signac.io/projects/flow/en/latest/project-cli.html).
+Initialize all the state points for the jobs (generate all the separate folders and state points).  
+ - Note: This command generates the `workspace` folder, which includes a sub-folder for each state point (different variable or replicate combinations),  These sub-folders are numbered uniquely based of the state point values.  The user can add more state points via the `init.py` file at any time, running the below command to create the new state points files and sub-folders that are in the `init.py` file.
 
-When using the `submit` command, you can run the following flags, controlling the how the jobs are submitted to the HPC:
- - `--bundle 2` : Only available when using `submit`.  This bundles multiple jobs (2 in this case) into a single run or HPC submittion script, auto adjusting the time, CPU cores, etc., based on the total command selections.
-  - `--pretend` : Only available when using `submit`.  This is used to output what the submission script will look like, without submitting it to the HPC. 
-  - `--parallel` : This only works this way when using `submit`.  The `N` value in `--parallel N` is not read; therefore, it only runs all the jobs in a HPC submittion script at the same time (in parallel), auto adjusting the time, CPU cores, etc., based on the total command selections. 
-  - See the `signac` [documenation](https://docs.signac.io/en/latest/) for more information, features, and the [Project Command Line Interface](https://docs.signac.io/projects/flow/en/latest/project-cli.html).
+ ```bash
+python init.py
+```
 
-  `Warning`, the user should always confirm the job submission to the HPC is working properly before submitting jobs using the `--pretend` flag, especially when using `--parallel` and `--bundle`.  This may involve programming the correct items in the custom HPC submission script (i.e., the files in the `templates` folder) as needed to make it work for their unique setup. 
+Check the status of your project (i.e., what parts are completed and what parts are available to be run).
+
+```bash
+row show status
+```
+
+## These are two (2) different ways to submit jobs (see below):
+
+1. ### **All Available Project Parts:**  Submit and run the all available jobs with `row submit`:
+   - Run `all available jobs for the whole project` locally with the `submit` command. 
+Note: This needs to be done for each part as it only submits the available parts to the scheduler.
+
+ ```bash
+ row submit
+ ```
+
+- Checking the project status.
+  
+ ```bash
+ row show status
+ ```
+
+- When the new jobs are ready, repeat this cycle until all jobs and the project is completed.
+  
+
+2. ### **Specific Project Parts:**  Submit and and run all the available jobs from specific the part with `row submit --action <part_x_this_does_a_function_y>`.
+ - Run all available `part 1` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_1_initialize_signac_command
+```
+
+ - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+  
+ ```bash
+ row show status
+ ```
+
+ - Run all available `part 2` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_2_download_data_command
+```
+
+ - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+  
+ ```bash
+ row show status
+ ```
+
+ - Run all available `part 3` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_3_train_and_test_command
+```
+
+ - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+  
+ ```bash
+ row show status
+ ```
+
+ - Run all available `part 4` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_4_fgsm_attack_command
+```
+
+ - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+  
+ ```bash
+ row show status
+ ```
+
+ - Run all available `part 5` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_5_seed_analysis_command
+```
+
+## Documention References:
+
+- See the [sigac documenation](https://docs.signac.io/) for more information, features, and the how to populate the workspace with the init.py file.
+- See the [row documenation](https://row.readthedocs.io/) for information on setting up and executing the workflows and job submissions. 
+
+## IMPORTANT NOTES:
+- `Row` status tracking is done only by looking for specific files located in the `workspace/*/` directories (i.e., for each state point).
+
+- When using the `row submit` command, you can run utilize flags to control the how the jobs are submitted. 
+
+- `Warning`, the user should always confirm the job submission to the HPC is working properly before submitting jobs using the `--dry-run` flag.  This may involve programming the correct items in the custom submission script or the python execution file (i.e., the `workflow.toml` or `actions.py` file) as needed to make it work for their unique setup. 
 
 
- ## templates directory and hpc_setup.py file
----------------------------------------------
-
-### hpc_setup.py file
-This file, `hpc_setup.py`, is used to specify the the HPC environment.  The `class` will need to be setup for each HPC (changing the class name and Default environment).  The following also need changed in the `class`:
- - The `template` variable to changed to the custom HPC submission script (the `slurm` `phoenix.sh` file is used here), which is located in the `templates` directory.  
- - The `hostname_pattern` variable to changed to the custom HPC hostname. In this case 'hostname' produced 'login-phoenix-slurm-2.pace.gatech.edu'.  
-
-### Templates directory
-This directory is used to store the custom HPC submission scripts and any template files used for the custom workflow (Example: A base template file that is used for a find and replace function, changing the variables with the differing state point inputs).  These find and replace template files could also be put in the `src` directory, but the HPC submission scripts must remain in the `templates` directory.   **All the standard or custom module load commands, conda activate commands, and any other custom items that needed to be HPC submission scripts should in included here for every project (Example: Specific queues, CPU/GPU models, etc.).** 
-
-This specific `phoenix.sh` file is designed to auto-select and submit CPU or GPU Slurm scripts based on what CPUs only or GPUs the user selected for each part of the project (i.e., jobs in the project parts.)

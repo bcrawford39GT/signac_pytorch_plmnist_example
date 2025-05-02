@@ -1,0 +1,190 @@
+#---------------------
+[workspace]
+value_file = "signac_statepoint.json"
+
+#---------------------
+[default.action]
+command = "python actions.py --action $ACTION_NAME {directories}"
+
+#---------------------
+[[action]]
+name = "part_1_initialize_signac_command"
+products = ["signac_job_document.json"]
+
+[action.group]
+maximum_size = 1
+
+[action.resources]
+processes.per_directory = 1
+threads_per_process = 1
+memory_per_cpu_mb = 4_100
+walltime.per_submission = "00:51:00"
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
+
+#[action.submit_options.<ADD_YOUR_HPC_NAME>]
+#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+#setup = """
+#module load mamba
+#mamba activate plmnist
+#"""
+
+# You can also select a real partition if it is in the 'clusters.toml' file, 
+# and then you do not need to add the '--partition' info in 'custom'.
+# However, this will only select a single partition.  If you want more 
+# If you do not want the slurm 'output' and 'error' files written, 
+# you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
+
+#partition = "cpu_general_not_real_partition"
+#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
+
+#---------------------
+[[action]]
+name = "part_2_download_data_command"
+products = ["data_download_complete.txt"]
+previous_actions = ["part_1_initialize_signac_command"]
+
+[action.group]
+maximum_size = 1
+
+[action.resources]
+processes.per_directory = 1
+threads_per_process = 1
+memory_per_cpu_mb = 4_200
+walltime.per_submission = "00:52:00"
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
+
+#[action.submit_options.<ADD_YOUR_HPC_NAME>]
+#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+#setup = """
+#module load mamba
+#mamba activate plmnist
+#"""
+
+# You can also select a real partition if it is in the 'clusters.toml' file, 
+# and then you do not need to add the '--partition' info in 'custom'.
+# However, this will only select a single partition.  If you want more 
+# than 1 partition, you should do it the same way as below.
+# If you do not want the slurm 'output' and 'error' files written, 
+# you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
+
+#partition = "cpu_general_not_real_partition"
+#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
+
+#---------------------
+[[action]]
+name = "part_3_train_and_test_command"
+products = ["results.json"]
+previous_actions = ["part_2_download_data_command"]
+
+[action.group]
+maximum_size = 1
+
+[action.resources]
+processes.per_directory = 1
+gpus_per_process = 1
+threads_per_process = 1
+memory_per_cpu_mb = 4_300
+walltime.per_submission = "00:53:00"
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
+
+#[action.submit_options.<ADD_YOUR_HPC_NAME>]
+#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+#setup = """
+#module reset
+#module load cuda
+#module load mamba
+#mamba activate plmnist
+#"""
+
+# You can also select a real partition if it is in the 'clusters.toml' file, 
+# and then you do not need to add the '--partition' info in 'custom'.
+# However, this will only select a single partition.  If you want more 
+# than 1 partition, you should do it the same way as below.
+# If you do not want the slurm 'output' and 'error' files written, 
+# you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
+
+#partition = "gpu_general_not_real_partition"
+#custom = ["", "--partition=gpu-1,gpu-1,gpu-3"]
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
+
+#---------------------
+[[action]]
+name = "part_4_fgsm_attack_command"
+products = ["fgsm_attack_complete.txt"]
+previous_actions = ["part_3_train_and_test_command"]
+
+[action.group]
+maximum_size = 1
+
+[action.resources]
+processes.per_submission = 1
+threads_per_process = 1
+memory_per_cpu_mb = 4_400
+walltime.per_submission = "00:54:00"
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
+
+##[action.submit_options.<ADD_YOUR_HPC_NAME>]
+#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+#setup = """
+#module load mamba
+#mamba activate plmnist
+#"""
+
+# You can also select a real partition if it is in the 'clusters.toml' file, 
+# and then you do not need to add the '--partition' info in 'custom'.
+# However, this will only select a single partition.  If you want more 
+# than 1 partition, you should do it the same way as below.
+# If you do not want the slurm 'output' and 'error' files written, 
+# you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
+
+#partition = "cpu_general_not_real_partition"
+#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
+
+#---------------------
+[[action]]
+name = "part_5_seed_analysis_command"
+products = ["avg_std_dev_calculated.txt"]
+previous_actions = ["part_4_fgsm_attack_command"]
+
+[action.group]
+submit_whole = true
+sort_by = ["/seed_int"]
+split_by_sort_key = true
+
+[action.resources]
+processes.per_submission = 1
+threads_per_process = 1
+memory_per_cpu_mb = 4_500
+walltime.per_submission = "00:55:00"
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
+
+#[action.submit_options.<ADD_YOUR_HPC_NAME>]
+#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+#setup = """
+#module load mamba
+#mamba activate plmnist
+#"""
+
+# You can also select a real partition if it is in the 'clusters.toml' file, 
+# and then you do not need to add the '--partition' info in 'custom'.
+# However, this will only select a single partition.  If you want more 
+# than 1 partition, you should do it the same way as below.
+# If you do not want the slurm 'output' and 'error' files written, 
+# you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
+
+#partition = "cpu_general_not_real_partition"
+#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******

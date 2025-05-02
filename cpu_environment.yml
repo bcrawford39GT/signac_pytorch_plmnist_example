@@ -11,5 +11,5 @@ dependencies:
   - conda-forge::pytorch-lightning
   - conda-forge::matplotlib
   - conda-forge::signac
-  - conda-forge::signac-flow
+  - conda-forge::row
   - conda-forge::signac-dashboard

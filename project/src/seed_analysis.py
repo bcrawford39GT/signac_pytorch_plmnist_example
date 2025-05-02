@@ -8,10 +8,11 @@ if typing.TYPE_CHECKING:
 
 
 # helper function for aggregating on all config keys except for seed
+'''
 def statepoint_without_seed(job: "Job"):
     """Return the statepoint dictionary without the seed."""
     return [(k, v) for k, v in job.statepoint.items() if k != "seed_int"]
-
+'''
 
 def seed_analysis(aggregated_jobs, output_file):
     test_acc_list = []

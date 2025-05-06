@@ -44,9 +44,9 @@ signac_directory = Path.cwd()
 if signac_directory.name != "project":
     raise ValueError(f"Please run this script from inside the `project` directory.")
 
-data_directory = signac_directory.parent / "data"
 analysis_directory = signac_directory / "analysis"
 output_file = analysis_directory / "output.txt"
+
 
 # ┌─────────────────────────────────┐
 # │ Part 1 - write the job document │
@@ -75,24 +75,28 @@ def part_1_initialize_signac_command(*jobs):
 def part_2_download_data_command(*jobs):
     """Download the data."""
 
-    print(f"data_directory = {data_directory}")
-    # Make the directory
-    if not (data_directory / "MNIST").exists():
-        data_directory.mkdir(parents=True, exist_ok=True)
-
-        print(f"python -m plmnist.download --data_dir data_directory = python -m plmnist.download --data_dir {data_directory}")
-        # Download the data
-        exec_download_data = subprocess.Popen(
-            f"python -m plmnist.download --data_dir {data_directory}", 
-            shell=True, 
-            stderr=subprocess.STDOUT
-        )
-        os.wait4(exec_download_data.pid, os.WSTOPPED)
-
     for job in jobs:
+
+        # find the main data directory
+        job_search = job.project.find_jobs({"statepoint_type": "main_data"})
+        assert len(job_search) == 1
+        main_data_job = [*job_search][0]
+
+        # Make the directory
+        if not os.path.isdir(main_data_job.fn("MNIST")):
+
+            print(f"python -m plmnist.download --data_dir data_directory = python -m plmnist.download --data_dir {data_directory}")
+            # Download the data
+            exec_download_data = subprocess.Popen(
+                f"python -m plmnist.download --data_dir {data_directory}", 
+                shell=True, 
+                stderr=subprocess.STDOUT
+            )
+            os.wait4(exec_download_data.pid, os.WSTOPPED)
+
         # Check that data has been downloaded and create completion files 
         # in each state point directory.
-        if (data_directory / "MNIST").exists():
+        if os.path.isdir(main_data_job.fn("MNIST")):
             # Print completion file
             exec_make_completion_file = subprocess.Popen(
                 f"touch {job.fn('data_download_complete.txt')}",
@@ -101,16 +105,48 @@ def part_2_download_data_command(*jobs):
             )
             os.wait4(exec_make_completion_file.pid, os.WSTOPPED)
 
-
 # ┌──────────────────────────────────────┐
-# │ Part 3 - train and test a neural net │
+# │ Part 3 - verify main data downloaded │
 # └──────────────────────────────────────┘
 
-def part_3_train_and_test_command(*jobs):
+def part_3_verify_main_data_downloaded_command(*jobs):
     """Run the train + test command."""
 
-    # The below will output the 'results.json' file
     for job in jobs:
+
+        # find the main data
+        job_search = job.project.find_jobs({"statepoint_type": "main_data"})
+        assert len(job_search) == 1
+        main_data_job = [*job_search][0]
+
+        # write the completion files in the correct training directories
+        if os.path.isfile(main_data_job.fn('data_download_complete.txt')):
+            exec_make_completion_file = subprocess.Popen(
+                f"touch {job.fn('ready_to_start_training.txt')}",
+                shell=True, 
+                stderr=subprocess.STDOUT
+            )
+            os.wait4(exec_make_completion_file.pid, os.WSTOPPED)
+            
+
+
+
+        
+
+# ┌──────────────────────────────────────┐
+# │ Part 4 - train and test a neural net │
+# └──────────────────────────────────────┘
+
+def part_4_train_and_test_command(*jobs):
+    """Run the train + test command."""
+
+    for job in jobs:
+        # find the main data
+        job_search = job.project.find_jobs({"statepoint_type": "main_data"})
+        assert len(job_search) == 1
+        main_data_job = [*job_search][0]
+
+        # The below will output the 'results.json' file
         output_file.unlink(missing_ok=True)
 
         train_command =  (
@@ -118,7 +154,7 @@ def part_3_train_and_test_command(*jobs):
             f"--num_epochs {int(job.statepoint.num_epochs_int)} "
             f"--log_path {job.path} "
             f"--result_path {job.path} "
-            f"--data_dir {data_directory} "
+            f"--data_dir {main_data_job.fn('MNIST')} "
             f"--batch_size {int(job.statepoint.batch_size_int)} "
             f"--hidden_size {int(job.statepoint.hidden_size_int)} "
             f"--learning_rate {float(job.statepoint.learning_rate_float)} "
@@ -139,13 +175,13 @@ def part_3_train_and_test_command(*jobs):
         
 
 # ┌──────────────────────────────┐
-# │ Part 4 - run the FGSM attack │
+# │ Part 5 - run the FGSM attack │
 # └──────────────────────────────┘
 
-def part_4_fgsm_attack_command(*jobs: Job):
+def part_5_fgsm_attack_command(*jobs):
     """Run FGSM attack command."""
 
-    for jobs in Job:
+    for job in jobs:
         output_file.unlink(missing_ok=True)
 
         fgsm_attack_command =  (
@@ -193,12 +229,12 @@ def part_4_fgsm_attack_command(*jobs: Job):
 
 
 # ┌─────────────────────────────────────┐
-# │ Part 5 - compute avg/std over seeds │
+# │ Part 6 - compute avg/std over seeds │
 # └─────────────────────────────────────┘
 
 # Note: Brad note: not sure if this is correct... need to check.
 
-def part_5_seed_analysis_command(*aggregated_jobs: Job):
+def part_6_seed_analysis_command(*aggregated_jobs: Job):
     """Write the output file with the seed averages."""
 
     print(f"analysis_directory = {analysis_directory}")

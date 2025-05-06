@@ -15,11 +15,11 @@ if signac_directory.name != "project":
 project = signac.init_project()
 
 
-# ┌───────────────────────────┐
-# │ Define statepoints to run │
-# └───────────────────────────┘
+# ┌───────────────────────────────────┐
+# │ Define plmnist statepoints to run │
+# └───────────────────────────────────┘
 
-
+plmnist_statpoint_type = 'plmnist'
 num_epochs_int_list = [1, 5]
 batch_size_int_list = [128]
 hidden_size_int_list = [64]
@@ -28,13 +28,10 @@ dropout_prob_float_list = [ 0.1, 0.5] #[0.0, 0.1, 0.5]
 fgsm_epsilon_float_list = [0.05]
 seed_int_list = [1, 2] #[1, 2, 3]
 
+# ┌────────────────────────────────────────────────┐
+# │ Create and initiate plmnist statepoints        │
+# └────────────────────────────────────────────────┘
 
-# ┌────────────────────────────────────────┐
-# │ Create list of statepoint dictionaries │
-# └────────────────────────────────────────┘
-
-
-all_statepoints = []
 for num_epochs_int_i in num_epochs_int_list:
     for batch_size_int_i in batch_size_int_list:
         for hidden_size_int_i in hidden_size_int_list:
@@ -43,6 +40,7 @@ for num_epochs_int_i in num_epochs_int_list:
                     for fgsm_epsilon_float_i in fgsm_epsilon_float_list:
                         for seed_int_i in seed_int_list:
                             statepoint = {
+                                "statepoint_type": plmnist_statpoint_type,
                                 "num_epochs_int": num_epochs_int_i,
                                 "batch_size_int": batch_size_int_i,
                                 "hidden_size_int": hidden_size_int_i,
@@ -52,24 +50,27 @@ for num_epochs_int_i in num_epochs_int_list:
                                 "seed_int": seed_int_i,
                             }
 
-                            all_statepoints.append(statepoint)
+                            project.open_job(statepoint=statepoint).init()
 
+# ┌─────────────────────────────────────────────────────┐
+# │ Define, create and initiate main data statepoints   │
+# └─────────────────────────────────────────────────────┘
 
-# ┌────────────────────────┐
-# │ Initialize statepoints │
-# └────────────────────────┘
+main_data_statepoint_type = 'main_data'
 
-for sp in all_statepoints:
-    project.open_job(statepoint=sp).init()
+statepoint = {
+"statepoint_type": main_data_statepoint_type,
+}
+
+project.open_job(statepoint=statepoint).init()
 
 # ┌────────────────────────────────────┐
 # │ Delete prior analaysis             │
 # └────────────────────────────────────┘
 
-# Delete any analysis files that require analysis
-# outside a single workspace file and reset row, 
-# as row does not dynamically recheck for completion 
-# status after the task is completed.  
+# Delete any analysis files that require analysis outside a single 
+# workspace file and reset row, as row does not dynamically recheck 
+# for completion status after the task is completed.  
 # If any previous replicate averages and std_devs exist delete them, 
  # because they will need recalculated as more state points were added.
 
@@ -85,8 +86,7 @@ except:
 
 # The 'avg_std_dev_calculated.txt' file are auto-deleted when 
 # the 'init.py' file is run.  So if there are errors with this, 
-# you can run 'python init.py' and it will reset it, so you can 
-# rerun it. 
+# you can run 'python init.py' and it will reset it, so you can rerun it. 
 # This also resets and recalculated the completion status.
 try:
     # Delete the 'avg_std_dev_calculated.txt' file

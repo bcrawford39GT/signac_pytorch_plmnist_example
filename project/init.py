@@ -7,6 +7,10 @@ import shutil
 import subprocess
 
 
+# ┌───────────────────────────────────────────────┐
+# │ SET THE PROJECTS DEFAULT DIRECTORY AND PATHS  │
+# └───────────────────────────────────────────────┘
+
 signac_directory = Path.cwd()
 
 if signac_directory.name != "project":
@@ -64,9 +68,9 @@ statepoint = {
 
 project.open_job(statepoint=statepoint).init()
 
-# ┌────────────────────────────────────┐
-# │ Delete prior analaysis             │
-# └────────────────────────────────────┘
+# ┌──────────────────────────────────────────────────────────────┐
+# │ Delete prior analaysis between multiple job to avoid errors  │
+# └──────────────────────────────────────────────────────────────┘
 
 # Delete any analysis files that require analysis outside a single 
 # workspace file and reset row, as row does not dynamically recheck 

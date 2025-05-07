@@ -147,7 +147,7 @@ row submit --action part_2_download_data_command
  - Run all available `part 3` sections of the project locally with the `submit` command.
 
 ```bash
-row submit --action part_3_train_and_test_command
+row submit --action part_3_verify_main_data_downloaded_command
 ```
 
  - Checking the project status via the belw and move forward when the next part is ready to be submitted..
@@ -159,7 +159,7 @@ row submit --action part_3_train_and_test_command
  - Run all available `part 4` sections of the project locally with the `submit` command.
 
 ```bash
-row submit --action part_4_fgsm_attack_command
+row submit --action part_4_train_and_test_command
 ```
 
  - Checking the project status via the belw and move forward when the next part is ready to be submitted..
@@ -171,7 +171,19 @@ row submit --action part_4_fgsm_attack_command
  - Run all available `part 5` sections of the project locally with the `submit` command.
 
 ```bash
-row submit --action part_5_seed_analysis_command
+row submit --action part_5_fgsm_attack_command
+```
+
+ - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+  
+ ```bash
+ row show status
+ ```
+
+ - Run all available `part 6` sections of the project locally with the `submit` command.
+
+```bash
+row submit --action part_6_seed_analysis_command
 ```
 
 ## Documention References:

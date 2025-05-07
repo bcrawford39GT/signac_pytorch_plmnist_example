@@ -10,15 +10,11 @@ import subprocess
 
 import json, datetime
 from pathlib import Path
+import numpy as np
 
-from signac import get_project
-from signac.job import Job
-
-from src.seed_analysis import seed_analysis
-
-# ******************************************************
-# NOTES (START)
-# ******************************************************
+# ┌──────────┐
+# │ NOTES    │
+# └──────────┘
 
 # Set the walltime, memory, and number of CPUs and GPUs needed
 # for each individual job, based on the part/section.
@@ -33,12 +29,10 @@ from src.seed_analysis import seed_analysis
 # *******************   WARNING   ***********************
 # *******************************************************
 
-# ******************************************************
-# NOTES (END)
-# ******************************************************
+# ┌───────────────────────────────────────────────┐
+# │ SET THE PROJECTS DEFAULT DIRECTORY AND PATHS  │
+# └───────────────────────────────────────────────┘
 
-
-# SET THE PROJECTS DEFAULT DIRECTORY AND PATHS
 signac_directory = Path.cwd()
 
 if signac_directory.name != "project":
@@ -71,7 +65,6 @@ def part_1_initialize_signac_command(*jobs):
 # │ Part 2 - download the MNIST data │
 # └──────────────────────────────────┘
 
-# operation: download the data
 def part_2_download_data_command(*jobs):
     """Download the data."""
 
@@ -85,10 +78,9 @@ def part_2_download_data_command(*jobs):
         # Make the directory
         if not os.path.isdir(main_data_job.fn("MNIST")):
 
-            print(f"python -m plmnist.download --data_dir data_directory = python -m plmnist.download --data_dir {data_directory}")
             # Download the data
             exec_download_data = subprocess.Popen(
-                f"python -m plmnist.download --data_dir {data_directory}", 
+                f'python -m plmnist.download --data_dir {main_data_job.fn("MNIST")}', 
                 shell=True, 
                 stderr=subprocess.STDOUT
             )
@@ -105,12 +97,13 @@ def part_2_download_data_command(*jobs):
             )
             os.wait4(exec_make_completion_file.pid, os.WSTOPPED)
 
-# ┌──────────────────────────────────────┐
-# │ Part 3 - verify main data downloaded │
-# └──────────────────────────────────────┘
+
+# ┌──────────────────────────────────────────────┐
+# │ Part 3 - verify the main data is downloaded  │
+# └──────────────────────────────────────────────┘
 
 def part_3_verify_main_data_downloaded_command(*jobs):
-    """Run the train + test command."""
+    """Verify the main data is downloaded."""
 
     for job in jobs:
 
@@ -119,7 +112,7 @@ def part_3_verify_main_data_downloaded_command(*jobs):
         assert len(job_search) == 1
         main_data_job = [*job_search][0]
 
-        # write the completion files in the correct training directories
+        # Write the completion files in the correct training directories
         if os.path.isfile(main_data_job.fn('data_download_complete.txt')):
             exec_make_completion_file = subprocess.Popen(
                 f"touch {job.fn('ready_to_start_training.txt')}",
@@ -127,11 +120,7 @@ def part_3_verify_main_data_downloaded_command(*jobs):
                 stderr=subprocess.STDOUT
             )
             os.wait4(exec_make_completion_file.pid, os.WSTOPPED)
-            
-
-
-
-        
+                  
 
 # ┌──────────────────────────────────────┐
 # │ Part 4 - train and test a neural net │
@@ -147,7 +136,6 @@ def part_4_train_and_test_command(*jobs):
         main_data_job = [*job_search][0]
 
         # The below will output the 'results.json' file
-        output_file.unlink(missing_ok=True)
 
         train_command =  (
             f"python -m plmnist "
@@ -215,9 +203,7 @@ def part_5_fgsm_attack_command(*jobs):
                         if "accuracy" not in loaded_json_file["fgsm"]:
                             passing_check_list.append(False)
 
-        print(f'passing_check_list = {passing_check_list}')
-
-        # Print completion file if completed correcty.
+        # Write the completion file if the job finished correcty.
         if False not in passing_check_list:
             # Print completion file
             exec_make_completion_file = subprocess.Popen(
@@ -232,18 +218,84 @@ def part_5_fgsm_attack_command(*jobs):
 # │ Part 6 - compute avg/std over seeds │
 # └─────────────────────────────────────┘
 
-# Note: Brad note: not sure if this is correct... need to check.
-
-def part_6_seed_analysis_command(*aggregated_jobs: Job):
+def part_6_seed_analysis_command(*jobs):
     """Write the output file with the seed averages."""
 
-    print(f"analysis_directory = {analysis_directory}")
     if not os.path.isdir(analysis_directory):
         os.system(f"mkdir {analysis_directory}")
 
-    seed_analysis(aggregated_jobs, output_file)
+    # create document
+    test_acc_list = []
+    test_loss_list = []
+    val_acc_list = []
+    val_loss_list = []
+    fgsm_acc_list = []
 
-    #Check that the replicate (seed) average file has been written and completed properly.
+    header = " ".join(
+        [
+            "num_epochs_int".ljust(25),
+            "batch_size_int".ljust(25),
+            "hidden_size_int".ljust(25),
+            "learning_rate_float".ljust(25),
+            "dropout_prob_float".ljust(25),
+            "fgsm_epsilon_float".ljust(25),
+            "test_acc_avg".ljust(25),
+            "test_acc_std_dev".ljust(25),
+            "test_loss_avg".ljust(25),
+            "test_loss_std_dev".ljust(25),
+            "val_acc_avg".ljust(25),
+            "val_acc_std_dev".ljust(25),
+            "val_loss_avg".ljust(25),
+            "val_loss_std_dev".ljust(25),
+            "fgsm_acc_avg".ljust(25),
+            "fgsm_acc_std_dev".ljust(25),
+            "\n",
+        ]
+    )
+
+    if output_file.exists():
+        output_file_obj = open(output_file, "a")
+    else:
+        output_file_obj = open(output_file, "w")
+        output_file_obj.write(header)
+
+    for job in jobs:  # only includes jobs of the same seed
+        
+        # get the individual values
+        with open(job.fn("results.json"), "r") as json_log_file:
+            loaded_json_file = json.load(json_log_file)
+
+            test_acc_list.append(loaded_json_file["test_acc"])
+            test_loss_list.append(loaded_json_file["test_loss"])
+            val_acc_list.append(loaded_json_file["val_acc"])
+            val_loss_list.append(loaded_json_file["val_loss"])
+            fgsm_acc_list.append(loaded_json_file["fgsm"]["accuracy"])
+
+    output_file_obj.write(
+        " ".join( 
+            [
+                f"{job.statepoint.num_epochs_int: <25}",
+                f"{job.statepoint.batch_size_int: <25}",
+                f"{job.statepoint.hidden_size_int: <25}",
+                f"{job.statepoint.learning_rate_float: <25}",
+                f"{job.statepoint.dropout_prob_float: <25}",
+                f"{job.statepoint.fgsm_epsilon_float: <25}",
+                f"{np.mean(test_acc_list): <25}",
+                f"{np.std(test_acc_list, ddof=1): <25}",
+                f"{np.mean(test_loss_list): <25}",
+                f"{np.std(test_loss_list, ddof=1): <25}",
+                f"{np.mean(val_acc_list): <25}",
+                f"{np.std(val_acc_list, ddof=1): <25}",
+                f"{np.mean(val_loss_list): <25}",
+                f"{np.std(val_loss_list, ddof=1): <25}",
+                f"{np.mean(fgsm_acc_list): <25}",
+                f"{np.std(fgsm_acc_list, ddof=1): <25}",
+                "\n",
+            ]
+        )
+    )
+
+    # Check that the replicate (seed) average file has been written and completed properly.
     passing_check_list = []
     if not output_file.exists():
         passing_check_list.append(False)
@@ -251,18 +303,16 @@ def part_6_seed_analysis_command(*aggregated_jobs: Job):
     with open(output_file, "r") as f:
         lines = f.readlines()
 
-    project = get_project()
-
     num_seeds = set()
-    for job in project:
-        num_seeds.add(job.statepoint.seed_int)
+    for job in jobs:
+        num_seeds.add(int(job.statepoint.seed_int))
 
-    num_agg = len(project) / len(num_seeds)
+    num_agg = len(jobs) / len(num_seeds)
 
     if len(lines) != num_agg + 1:
         passing_check_list.append(False)
 
-    # Print completion file if completed correcty.
+    # Write the completion file if the job finished correcty.
     if False not in passing_check_list:
         # Print completion file
         exec_make_completion_file = subprocess.Popen(
@@ -272,10 +322,11 @@ def part_6_seed_analysis_command(*aggregated_jobs: Job):
         )
         os.wait4(exec_make_completion_file.pid, os.WSTOPPED)
 
+    output_file_obj.close()
 
-# ******************************************************
-# ROW'S ENDING CODE SECTION (START)
-# ******************************************************
+# ┌───────────────────────────┐
+# │ ROW'S ENDING CODE SECTION │
+# └───────────────────────────┘
 if __name__ == '__main__':
     # Parse the command line arguments: python action.py --action <ACTION> [DIRECTORIES]
     parser = argparse.ArgumentParser()
@@ -289,7 +340,5 @@ if __name__ == '__main__':
 
     # Call the action
     globals()[args.action](*jobs)
-# ******************************************************
-# ROW'S ENDING CODE SECTION (END)
-# ******************************************************
+
 

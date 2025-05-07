@@ -135,8 +135,8 @@ maximum_size = 1
 processes.per_directory = 1
 #gpus_per_process = 1
 threads_per_process = 1
-memory_per_cpu_mb = 4_300
-walltime.per_submission = "00:53:00"
+memory_per_cpu_mb = 4_400
+walltime.per_submission = "00:54:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
@@ -176,8 +176,8 @@ maximum_size = 1
 [action.resources]
 processes.per_submission = 1
 threads_per_process = 1
-memory_per_cpu_mb = 4_400
-walltime.per_submission = "00:54:00"
+memory_per_cpu_mb = 4_500
+walltime.per_submission = "00:55:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
@@ -211,14 +211,16 @@ condition = ["/statepoint_type", "==", "plmnist"]
 
 [action.group]
 submit_whole = true
-sort_by = ["/seed_int"]
+# sort by all state points except the 'seed_int', which allows the differnt 'seed_int' to be averaged.
+sort_by = ["/num_epochs_int", "/batch_size_int", "/hidden_size_int", "/learning_rate_float", "/dropout_prob_float", "/fgsm_epsilon_float"]
 split_by_sort_key = true
+
 
 [action.resources]
 processes.per_submission = 1
 threads_per_process = 1
-memory_per_cpu_mb = 4_500
-walltime.per_submission = "00:55:00"
+memory_per_cpu_mb = 4_600
+walltime.per_submission = "00:56:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 

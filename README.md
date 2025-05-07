@@ -22,15 +22,17 @@ Using `signac` and `row` workflows provide the following benefits:
 
 This is a `signac` Workflow example/tutorial for a pytorch using plmnist, which utilizes the following workflow steps:
 
- - **Part 1:** For each individual job (set of state points), this code generates the `signac_job_document.json` file from the `signac_statepoint.json` data.  The `signac_statepoint.json` only stores the set of state points or required variables for the given job.  The `signac_job_document.json` can be used to store any other variables that the user wants to store here for later use or searching. 
+- **Part 1:** For each individual job (set of state points), this code generates the `signac_job_document.json` file from the `signac_statepoint.json` data.  The `signac_statepoint.json` only stores the set of state points or required variables for the given job.  The `signac_job_document.json` can be used to store any other variables that the user wants to store here for later use or searching. 
 
 - **Part 2:** This downloads the dataset used for the pytorch and plmnist calculations, which will be used to do a calculation/model in `Part 3`.  
 
-- **Part 3:** Run pytorch for the plmnist model without fgsm, using bash command to run a software package inside the commands for each state point. 
+- **Part 3:** Checks to see if `Part 4` can be run, and if so, prints a file to signify that is able to run `Part 4`. 
 
-- **Part 4:** Run the fgsm on the model from `Part 3`, using bash command to run a software package inside the commands for each state point.  
+- **Part 4:** Run pytorch for the plmnist model without fgsm, using bash command to run a software package inside the commands for each state point. 
 
-- **Part 5:** Obtain the average and standard deviation for each input value combination (`num_epochs`, `batch_size`, `hidden_size`, `learning_rate`, `dropout_prob`, `fgsm_epsilon`), with different `seed` values (replicates). The user can add more values at any time via the `init.py` file and rerun only the added value calculations.  The averages and standard deviations accoss the different `seed` values (replicates) are determined for the `test_acc_avg`, `test_acc_std`, `test_loss_avg`, `test_loss_std`, `val_acc_avg`, `val_acc_std`, `val_loss_avg`, `val_loss_std`, `fgsm_acc_avg`, and `fgsm_acc_std` values, and added to the `analysis/output_avg_std_of_seed_txt_filename.txt` file.
+- **Part 5:** Run the fgsm on the model from `Part 3`, using bash command to run a software package inside the commands for each state point.  
+
+- **Part 6:** Obtain the average and standard deviation for each input value combination (`num_epochs`, `batch_size`, `hidden_size`, `learning_rate`, `dropout_prob`, `fgsm_epsilon`), with different `seed` values (replicates). The user can add more values at any time via the `init.py` file and rerun only the added value calculations.  The averages and standard deviations accoss the different `seed` values (replicates) are determined for the `test_acc_avg`, `test_acc_std`, `test_loss_avg`, `test_loss_std`, `val_acc_avg`, `val_acc_std`, `val_loss_avg`, `val_loss_std`, `fgsm_acc_avg`, and `fgsm_acc_std` values, and added to the `analysis/output_avg_std_of_seed_txt_filename.txt` file.
 
 
 ## Resources

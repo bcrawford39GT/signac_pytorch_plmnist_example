@@ -195,9 +195,9 @@ row submit --action part_6_seed_analysis_command
 
  - Check the project status and make sure all parts are completed.  If all completed, the project is completed sucessfully. If not, you may need to rerun some parts.
    
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
 ## Documention References:
 

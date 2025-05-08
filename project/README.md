@@ -27,11 +27,13 @@ signac init
 ```
 
  - State point initialization.
+
 ```bash
 python init.py
 ```
 
  - Checking the project status.
+ 
 ```bash
 row show status
 ```
@@ -96,7 +98,7 @@ row submit --dry-run
 Initialize all the state points for the jobs (generate all the separate folders and state points).  
  - Note: This command generates the `workspace` folder, which includes a sub-folder for each state point (different variable or replicate combinations),  These sub-folders are numbered uniquely based of the state point values.  The user can add more state points via the `init.py` file at any time, running the below command to create the new state points files and sub-folders that are in the `init.py` file.
 
- ```bash
+```bash
 python init.py
 ```
 
@@ -112,15 +114,15 @@ row show status
    - Run `all available jobs for the whole project` locally with the `submit` command. 
 Note: This needs to be done for each part as it only submits the available parts to the scheduler.
 
- ```bash
- row submit
- ```
+```bash
+row submit
+```
 
  - Check the project status and move forward when the next part is ready to be submitted.
   
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
 - When the new jobs are ready, repeat this cycle until all jobs and the project is completed.  If all completed, the project is completed sucessfully. If not, you may need to rerun some parts.
    
@@ -134,9 +136,9 @@ row submit --action part_1_initialize_signac_command
 
  - Check the project status and move forward when the next part is ready to be submitted.
    
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
  - Run all available `part 2` sections of the project locally with the `submit` command.
 
@@ -146,9 +148,9 @@ row submit --action part_2_download_data_command
 
  - Check the project status and move forward when the next part is ready to be submitted.
    
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
  - Run all available `part 3` sections of the project locally with the `submit` command.
 
@@ -158,9 +160,9 @@ row submit --action part_3_verify_main_data_downloaded_command
 
  - Check the project status and move forward when the next part is ready to be submitted.
    
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
  - Run all available `part 4` sections of the project locally with the `submit` command.
 
@@ -171,9 +173,9 @@ row submit --action part_4_train_and_test_command
  - Check the project status and move forward when the next part is ready to be submitted.
 
   
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
  - Run all available `part 5` sections of the project locally with the `submit` command.
 
@@ -183,9 +185,9 @@ row submit --action part_5_fgsm_attack_command
 
  - Check the project status and move forward when the next part is ready to be submitted.
    
- ```bash
- row show status
- ```
+```bash
+row show status
+```
 
  - Run all available `part 6` sections of the project locally with the `submit` command.
 

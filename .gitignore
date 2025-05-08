@@ -1,6 +1,7 @@
 .vscode/
 data/
 .signac/
+.row/
 project/workspace/
 project/analysis/output.txt
 project/signac_project_document.json

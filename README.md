@@ -26,11 +26,11 @@ This is a `signac` Workflow example/tutorial for a pytorch using plmnist, which 
 
 - **Part 2:** This downloads the dataset used for the pytorch and plmnist calculations, which will be used to do a calculation/model in `Part 3`.  
 
-- **Part 3:** Checks to see if `Part 4` can be run, and if so, prints a file to signify that is able to run `Part 4`. 
+- **Part 3:** Checks to see if `Part 4` can be run, and if so, prints a file to signify that. 
 
 - **Part 4:** Run pytorch for the plmnist model without fgsm, using bash command to run a software package inside the commands for each state point. 
 
-- **Part 5:** Run the fgsm on the model from `Part 3`, using bash command to run a software package inside the commands for each state point.  
+- **Part 5:** Run the fgsm on the model from `Part 4`, using bash command to run a software package inside the commands for each state point.  
 
 - **Part 6:** Obtain the average and standard deviation for each input value combination (`num_epochs`, `batch_size`, `hidden_size`, `learning_rate`, `dropout_prob`, `fgsm_epsilon`), with different `seed` values (replicates). The user can add more values at any time via the `init.py` file and rerun only the added value calculations.  The averages and standard deviations accoss the different `seed` values (replicates) are determined for the `test_acc_avg`, `test_acc_std`, `test_loss_avg`, `test_loss_std`, `val_acc_avg`, `val_acc_std`, `val_loss_avg`, `val_loss_std`, `fgsm_acc_avg`, and `fgsm_acc_std` values, and added to the `analysis/output_avg_std_of_seed_txt_filename.txt` file.
 
@@ -63,9 +63,9 @@ cd signac_pytorch_plmnist_example
 > [!WARNING]  !! **Warning** !!
 > 
 > If you use the CPU build  (`cpu_environment.yml`) you will have to also modify 
-> Part 3 in the `workflow.toml`, removing the GPU requirement and selecting the 
+> Part 4 in the `workflow.toml`, removing the GPU requirement and selecting the 
 > correct partiions, etc. 
-> Not doing this will result in errors in submitting and running Part 3.
+> Not doing this will result in errors in submitting and running Part 4.
 
 ```bash
 mamba env create --file cpu_environment.yml
@@ -127,13 +127,13 @@ cp clusters.toml ~/.config/row/clusters.toml
      
 - Modify the slurm submission script, or modify the `workflow.toml` file to your cluster's partitions that you want to use, you can do that with the below addition to the `workflow.toml` file.
 
-For parts 1, 2, and 4, add the CPU partion(s) you want to use:
+For parts 1, 2, 3, 4, and 5, add the CPU partion(s) you want to use:
 
     ```bash
     custom = ["","--partition=cpu-1,cpu-1,cpu-3"]
     ```
 
-For part 3, add the GPU partion(s) you want to use:
+For part 4, add the GPU partion(s) you want to use:
 
     ```bash
     custom = ["","--partition=gpu-1,gpu-1,gpu-3"]
@@ -183,52 +183,8 @@ row clean
 rm -r workspace
 ```
 
-
-## Local Setup
---------------
-
-- If `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
-
-### Testing the setup for running only locally, **not on an HPC**.  
-
-**Build the test workspace:**     
-
-```bash
-python init.py
-```
-
-**Run the following command as the test all available submissions or just from a spr:**     
-
-```bash
-row submit --dry-run
-```
-
-**You should see an output that looks something like this (<u>export ACTION_CLUSTER=\`none\`</u>) in the output if it is working:**
-
-```bash
-...
-
-directories=(
-be31aae200171ac52a9e48260b7ba5b1
-)
-
-export ACTION_WORKSPACE_PATH=workspace
-export ACTION_CLUSTER=`none`
-
-...
-```
-
-**Clean up row and delete the test workspace:**    
-
-```bash
-row clean
-```
-
-```bash
-rm -r workspace
-```
-
-## Testing the setup for running **on an HPC**.
+### Testing the setup for running **on an HPC**.
+-----------------------------------------------
 
 **Build the test workspace:**     
 
@@ -253,6 +209,52 @@ be31aae200171ac52a9e48260b7ba5b1
 
 export ACTION_WORKSPACE_PATH=workspace
 export ACTION_CLUSTER=<YOUR_HPC_NAME>
+
+...
+```
+
+**Clean up row and delete the test workspace:**    
+
+```bash
+row clean
+```
+
+```bash
+rm -r workspace
+```
+
+## Local Setup
+--------------
+
+- If `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
+- Change the GPU parts to run only on CPU, if the local hardware is supports CPU workflows (see the notes in the `workflow.toml`).
+
+### Testing the setup for running only locally, **not on an HPC**. 
+------------------------------------------------------------------ 
+
+**Build the test workspace:**     
+
+```bash
+python init.py
+```
+
+**Run the following command as the test:**       
+
+```bash
+row submit --dry-run
+```
+
+**You should see an output that looks something like this (<u>export ACTION_CLUSTER=\`none\`</u>) in the output if it is working:**
+
+```bash
+...
+
+directories=(
+be31aae200171ac52a9e48260b7ba5b1
+)
+
+export ACTION_WORKSPACE_PATH=workspace
+export ACTION_CLUSTER=`none`
 
 ...
 ```

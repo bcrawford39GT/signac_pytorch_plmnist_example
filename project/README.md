@@ -2,6 +2,7 @@
 --------------------
 
 ## Overview
+
 All the `signac` commands are run from the `<local_path>/signac_pytorch_plmnist_example/signac_pytorch_plmnist_example/project` directory, which include, but are not limited to the following commands:
 
 
@@ -31,39 +32,44 @@ python init.py
 ```
 
  - Checking the project status.
-    ```bash
-    row show status
-    ```
+```bash
+row show status
+```
 
- - **All Available Project Parts:**  Submit and run all the available jobs from all the parts.
+### **Option 1 of 2: Check and Submit and run all the available jobs from all the parts.**
+------------------------------------------------------------------------------------------
    1. See the `row show status` output for the part names.
    2. Note: This can be run on the HPC or locally.  However, if `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
 
-    **Run the following command and test/review the output to make sure it is submitting the correct slurm scripts or local output:**
-    ```bash
-    row submit --dry-run
-    ```
+   **Run the following command and test/review the output to make sure it is submitting the correct slurm scripts or local output:**
 
-    **Run the following command to submit or execute all the available jobs:**
+   ```bash
+   row submit --dry-run
+   ```
+
+   **Run the following command to submit or execute all the available jobs:**
+
    ```bash
     row submit
-    ```
+   ```
 
-- **Specific Project Parts:**  Submit and and run all the available jobs from specific the parts.
+### **Option 2 of 2: Check and Submit all the available jobs from specific the parts.**
+------------------------------------------------------------------------------------
   1. See the `row show status` output for the part names.
   2. Note: This can be run on the HPC or locally.  However, if `row submit` is run locally like this, then you must remove the HPC parts in the `workflow.toml` file (see the notes in the `workflow.toml`).
 
-    **Run the following command and review the output to make sure it is submitting the correct slurm scripts or local output:**:**
-    ```bash
-    row submit --action <part_x_this_does_a_function_y> --dry-run
-    ```
+   **Run the following command and review the output to make sure it is submitting the correctslurm scripts or local output:**:**
+   ```bash
+   row submit --action <part_x_this_does_a_function_y> --dry-run
+   ```
 
-    **Run the following command to submit or execute all the available jobs for that part:**
-    ```bash
-    row submit --action <part_x_this_does_a_function_y>
-    ```
+   **Run the following command to submit or execute all the available jobs for that part:**
+   ```bash
+   row submit --action <part_x_this_does_a_function_y>
+   ```
 
 ## Submit the workflow jobs locally or to an HPC, depending on the `workflow.toml` file setup. 
+----------------------------------------------------------------------------------------------
 
 Please also look [here](https://row.readthedocs.io/en/0.4.0/workflow/action/submit-options.html) for more details on the HPC setup.
 
@@ -102,7 +108,7 @@ row show status
 
 ## These are two (2) different ways to submit jobs (see below):
 
-1. ### **All Available Project Parts:**  Submit and run the all available jobs with `row submit`:
+1. ### **Option 1 of 2: Submit and ruun all the available jobs from all the parts with `row submit`:**
    - Run `all available jobs for the whole project` locally with the `submit` command. 
 Note: This needs to be done for each part as it only submits the available parts to the scheduler.
 
@@ -110,24 +116,24 @@ Note: This needs to be done for each part as it only submits the available parts
  row submit
  ```
 
-- Checking the project status.
+ - Check the project status and move forward when the next part is ready to be submitted.
   
  ```bash
  row show status
  ```
 
-- When the new jobs are ready, repeat this cycle until all jobs and the project is completed.
+- When the new jobs are ready, repeat this cycle until all jobs and the project is completed.  If all completed, the project is completed sucessfully. If not, you may need to rerun some parts.
+   
   
-
-2. ### **Specific Project Parts:**  Submit and and run all the available jobs from specific the part with `row submit --action <part_x_this_does_a_function_y>`.
+2. ### **Option 2 of 2: Submit and and run all the available jobs from specific the part with `row submit --action <part_x_this_does_a_function_y>`:**
  - Run all available `part 1` sections of the project locally with the `submit` command.
 
 ```bash
 row submit --action part_1_initialize_signac_command
 ```
 
- - Checking the project status via the belw and move forward when the next part is ready to be submitted..
-  
+ - Check the project status and move forward when the next part is ready to be submitted.
+   
  ```bash
  row show status
  ```
@@ -138,8 +144,8 @@ row submit --action part_1_initialize_signac_command
 row submit --action part_2_download_data_command
 ```
 
- - Checking the project status via the belw and move forward when the next part is ready to be submitted..
-  
+ - Check the project status and move forward when the next part is ready to be submitted.
+   
  ```bash
  row show status
  ```
@@ -150,8 +156,8 @@ row submit --action part_2_download_data_command
 row submit --action part_3_verify_main_data_downloaded_command
 ```
 
- - Checking the project status via the belw and move forward when the next part is ready to be submitted..
-  
+ - Check the project status and move forward when the next part is ready to be submitted.
+   
  ```bash
  row show status
  ```
@@ -162,7 +168,8 @@ row submit --action part_3_verify_main_data_downloaded_command
 row submit --action part_4_train_and_test_command
 ```
 
- - Checking the project status via the belw and move forward when the next part is ready to be submitted..
+ - Check the project status and move forward when the next part is ready to be submitted.
+
   
  ```bash
  row show status
@@ -174,8 +181,8 @@ row submit --action part_4_train_and_test_command
 row submit --action part_5_fgsm_attack_command
 ```
 
- - Checking the project status via the belw and move forward when the next part is ready to be submitted..
-  
+ - Check the project status and move forward when the next part is ready to be submitted.
+   
  ```bash
  row show status
  ```
@@ -185,6 +192,12 @@ row submit --action part_5_fgsm_attack_command
 ```bash
 row submit --action part_6_seed_analysis_command
 ```
+
+ - Check the project status and make sure all parts are completed.  If all completed, the project is completed sucessfully. If not, you may need to rerun some parts.
+   
+ ```bash
+ row show status
+ ```
 
 ## Documention References:
 

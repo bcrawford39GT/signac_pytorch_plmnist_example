@@ -25,12 +25,12 @@ walltime.per_submission = "00:51:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-#[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -38,8 +38,8 @@ walltime.per_submission = "00:51:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "cpu_general_not_real_partition"
-#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+partition = "cpu_general_not_real_partition"
+custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
 
@@ -63,12 +63,12 @@ walltime.per_submission = "00:52:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-#[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -77,8 +77,8 @@ walltime.per_submission = "00:52:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "cpu_general_not_real_partition"
-#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+partition = "cpu_general_not_real_partition"
+custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
 
@@ -101,12 +101,12 @@ walltime.per_submission = "00:53:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-#[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -115,9 +115,10 @@ walltime.per_submission = "00:53:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "cpu_general_not_real_partition"
-#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+partition = "cpu_general_not_real_partition"
+custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
 
+# ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
 
 #---------------------
 [[action]]
@@ -133,21 +134,27 @@ maximum_size = 1
 
 [action.resources]
 processes.per_directory = 1
-#gpus_per_process = 1
+
+# Change the GPU parts to run only on CPU, if the local hardware 
+# is supports CPU workflows (see the notes in the workflow.toml).
+# This means remove the'gpus_per_process' and change the 'partition', 
+# and 'custom' variables below.
+gpus_per_process = 1
+
 threads_per_process = 1
 memory_per_cpu_mb = 4_400
 walltime.per_submission = "00:54:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-#[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module reset
-#module load cuda
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module reset
+module load cuda
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -156,8 +163,8 @@ walltime.per_submission = "00:54:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "gpu_general_not_real_partition"
-#custom = ["", "--partition=gpu-1,gpu-1,gpu-3"]
+partition = "gpu_general_not_real_partition"
+custom = ["", "--partition=gpu-1,gpu-1,gpu-3"]
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
 
@@ -181,12 +188,12 @@ walltime.per_submission = "00:55:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-##[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -195,8 +202,8 @@ walltime.per_submission = "00:55:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "cpu_general_not_real_partition"
-#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+partition = "cpu_general_not_real_partition"
+custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
 
@@ -211,8 +218,10 @@ condition = ["/statepoint_type", "==", "plmnist"]
 
 [action.group]
 submit_whole = true
-# sort by all state points except the 'seed_int', which allows the differnt 'seed_int' to be averaged.
+
+# Sort by all state points except the 'seed_int', which allows the differnt 'seed_int' to be averaged.
 sort_by = ["/num_epochs_int", "/batch_size_int", "/hidden_size_int", "/learning_rate_float", "/dropout_prob_float", "/fgsm_epsilon_float"]
+
 split_by_sort_key = true
 
 
@@ -224,12 +233,12 @@ walltime.per_submission = "00:56:00"
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (START) ******
 
-#[action.submit_options.<ADD_YOUR_HPC_NAME>]
-#account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
-#setup = """
-#module load mamba
-#mamba activate plmnist
-#"""
+[action.submit_options.<ADD_YOUR_HPC_NAME>]
+account = "<ADD_YOUR_CHARGE_ACCOUNT_NAME>"
+setup = """
+module load mamba
+mamba activate plmnist
+"""
 
 # You can also select a real partition if it is in the 'clusters.toml' file, 
 # and then you do not need to add the '--partition' info in 'custom'.
@@ -238,7 +247,7 @@ walltime.per_submission = "00:56:00"
 # If you do not want the slurm 'output' and 'error' files written, 
 # you can add "--output=/dev/null" and "--error=/dev/null" in the 'custom list.
 
-#partition = "cpu_general_not_real_partition"
-#custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
+partition = "cpu_general_not_real_partition"
+custom = ["", "--partition=cpu-1,cpu-1,cpu-3"]
 
 # ****** USED ONLY FOR SLURM SUBMISSION - REMOVE OR '#' OUT IF RUNNING LOCALLY (END) ******
